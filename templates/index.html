@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>孙亚辉的blog</title>
+    <link rel="shortcut icon " href="https://cdn.jsdelivr.net/npm/@bootcss/www.bootcss.com@0.0.18/dist/ico/favicon.ico">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" type="text/css">
+    <script src="/static/js/jquery.min.js"></script>
+    <style type="text/css">
+        body {background-color: rgb(233, 221, 221) !important;}
+        p {overflow-wrap: break-word; word-wrap: break-word;}
+        .container {max-width: 640px !important;}
+        .hello-form {margin-bottom: 20px;}
+        header {margin: 50px 0 40px 0;}
+        header h3 {font-size: 30px; font-weight: bold;}
+        .sub-title {font-size: 24px;}
+        @media screen and (max-width: 600px) {.sub-title {display: block;}}
+        header a {text-decoration: none !important;}
+        footer {margin: 20px;}
+        .btn {margin-top: 20px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h3 class="text-center text-success">孙亚辉的blog</h3>
+        </header>
+        <p>Vue 是一套用于构建用户界面的渐进式框架。
+官宣：
+Vue (读音 /vjuː/，类似于 view) 是一套用于构建用户界面的渐进式框架。与其它大型框架不同的是，Vue 被设计为可以自底向上逐层应用。Vue 的核心库只关注视图层，不仅易于上手，还便于与第三方库或既有项目整合。另一方面，当与现代化的工具链以及各种支持类库结合使用时，Vue 也完全能够为复杂的单页应用提供驱动。
+
+简单来说其实就是：
+vue是一套构建用户界面的框架。在我看来，渐进式代表的含义是：主张最少。每个框架都不可避免会有自己的一些特点，从而会对使用者有一定的要求，这些要求就是主张，主张有强有弱，它的强势程度会影响在业务开发中的使用方式。简单说就是对于vue中你不熟悉不太把握的模块或者功能，你可以不用它，或者你可以用你熟悉有把握的技术进行代替 。这样子看来是不是感觉很友好，相对于其他框架硬要求很少了，你可以逐渐性的使用框架。
+
+一、什么是Vue？
+为了实现前后端分离的开发理念，开发前端 SPA（single page web application） 项目，实现数据绑定，路由配置，项目编译打包等一系列工作的技术框架。
+
+二、vue全家桶
+Vue有著名的全家桶系列，包含了vue-router（http://router.vuejs.org），vuex（http://vuex.vuejs.org）， vue-resource（https://github.com/pagekit/vue-resource）。再加上构建工具vue-cli，sass样式,就是一个完整的vue项目的核心构成。
+
+概括起来就是：、1.项目构建工具、2.路由、3.状态管理、4.http请求工具。
+</p>
+        <div class="hello-form">
+            <div class="hello-group">
+                <label for="username">姓名</label>
+                <input type="text" id="username" name="username" class="form-control">
+            </div>
+            <div class="hello-group">
+                <label for="content">评论</label>
+                <textarea name="content" id="content" class="form-control"></textarea>
+            </div>
+            <button id="btn" class="btn btn-success">提交</button>
+        </div>
+        <div class="list-group">
+<!--            <a href="#" class="list-group-item">-->
+<!--                <div class="clearfix">-->
+<!--                    <h5 class="text-success pull-left">-->
+<!--                        评论人-->
+<!--                    </h5>-->
+<!--                    <h5 class="pull-right">-->
+<!--                        <small>datatime</small>-->
+<!--                    </h5>-->
+<!--                </div>-->
+<!--                <p>评论</p>-->
+<!--            </a>-->
+        </div>
+    </div>
+    <script>
+        $(function(){
+            $("#btn").on("click",function(){
+                var username=$("#username").val();
+                var content=$("#content").val();
+                if(username!=""&&content!=""){
+                    $.ajax({
+                        url:"/comment/addData",
+                        type:"post",
+                        data:JSON.stringify({username:username,content:content}),
+                        contentType:"application/json",
+                        dataType:"json",
+                        success:function(res){
+                            if(res.code==200){
+                                alert(res.message);
+                                location.reload();
+                            }
+                            else{
+                                alert(res.message);
+                                location.reload();
+                            }
+                        },
+                    })
+                }else{
+                    alert("内容不能为空")
+                }
+            })
+        })
+    </script>
+    <script>
+        function show(data){
+            html="";
+            $.each(data,function(i,obj){
+                        html+='<a href="#" class="list-group-item">';
+                        html+='<div class="clearfix">';
+                        html+='<h5 class="text-success pull-left">';
+                        html+=obj.username;
+                        html+='</h5>';
+                        html+='<h5 class="pull-right">';
+                        html+='<small>'+obj.datatime+'</small>';
+                        html+='</h5>';
+                        html+='</div>';
+                        html+='<p>'+obj.content+'</p>';
+                        html+='</a>';
+                    })
+        return html;
+        }
+        $(function(){
+            $.ajax({
+                url:"/comment/addData",
+                type:"get",
+                dataType:"json",
+                success:function(res){
+                    if(res.code==200){
+                        $(".list-group").append(show(res.data))
+                        console.log(res.data)
+                    }
+                },
+                error:function(){
+                    alert("服务器错误")
+                }
+            })
+        })
+        function getScrollTop(){
+            var scrollTop=0;
+            if(document.documentElement.scrollTop&&document.documentElement){
+                scrollTop=document.documentElement.scrollTop;
+            }else if(document.body){
+                scrollTop=document.body.scrollTop;
+            }
+            return scrollTop;
+        }
+        function getClientHeight(){
+            var clientHeight=0;
+            if(document.documentElement.clientHeight&&document.body.clientHeight){
+                clientHeight=Math.min(document.documentElement.clientHeight,document.body.clientHeight);
+            }else{
+                clientHeight=Math.max(document.documentElement.clientHeight,document.body.clientHeight);
+            }
+            return clientHeight;
+        }
+        function getScrollHeight(){
+            return Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);
+        }
+        var flag=true;
+        window.onscroll=function(){
+            if(getScrollTop()+getClientHeight()==getScrollHeight()){
+                var size=$(".list-group").children("a").length;
+                console.log(size)
+                if(flag){
+                    $.ajax({
+                    url:"/comment/getData",
+                    type:"get",
+                    data:{size:size},
+                    dataType:"json",
+                    success:function(res){
+                        if(res.code==200){
+                            $(".list-group").append(show(res.data));
+                        }else if(res.code==201){
+                            flag=false;
+                            $(".list-group").append($('<a href="#" class="list-group-item text-center">没有更多评论了</a>'));
+                        }
+                    }
+
+                })
+                }
+
+            }
+        }
+    </script>
+</body>
+</html>
